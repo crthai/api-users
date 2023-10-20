@@ -3,20 +3,19 @@ package com.example.controller;
 import com.example.controller.dtos.UsuarioRequestDTO;
 import com.example.controller.dtos.Views;
 import com.example.model.Usuario;
-import com.example.repository.UsuarioRepository;
 import com.example.service.UsuarioService;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -38,17 +37,16 @@ public class UsuarioController {
     }
 
      @GetMapping("/{id}")
-     @JsonView(Views.UsuarioResponse.class)
      public ResponseEntity<Usuario> findById(@PathVariable Long id){
-         return usuarioService.buscaID(id)
-                 .map(record -> ResponseEntity.ok().body(record))
-                 .orElse(ResponseEntity.notFound().build());
+         return ResponseEntity.ok(usuarioService.buscaId(id));
      }
 
-     @GetMapping("/pagination/{offset}/{pageSize}")
-     public Page<Usuario> getUsers(@PathVariable int offset,@PathVariable int pageSize) {
-        return usuarioService.buscaUsuarios(offset, pageSize);
+     @GetMapping
+     public ResponseEntity<Page<Usuario>> getUsers(@RequestParam(value = "page", defaultValue = "0") Integer page,
+                                   @RequestParam(value = "linesPerPage", defaultValue = "3")Integer linesPerPage,
+                                   @RequestParam(value = "direction", defaultValue = "ASC")String direction,
+                                   @RequestParam(value = "orderBy", defaultValue = "id")String orderBy) {
+         Page<Usuario> usuarioPage = usuarioService.buscaUsuarios(page, linesPerPage, direction, orderBy);
+         return ResponseEntity.ok(usuarioPage);
      }
-
-
 }

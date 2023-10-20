@@ -2,19 +2,16 @@ package com.example.service;
 
 import com.example.controller.dtos.UsuarioRequestDTO;
 import com.example.exception.UsuarioJaExisteException;
+import com.example.exception.UsuarioNotFoundException;
 import com.example.model.Usuario;
 import com.example.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Service
@@ -47,12 +44,14 @@ public class UsuarioService {
         return repository.findByCpf(cpf);
     }
 
-    public Optional<Usuario> buscaID(Long id){
-        return repository.findById(id);
+    public Usuario buscaId(Long id){
+        return repository.findById(id)
+                .orElseThrow(() -> new UsuarioNotFoundException("O usuário não existe com este " + id));
     }
 
-    public Page<Usuario> buscaUsuarios(int offset,int pageSize){
-       Page<Usuario> users = repository.findAll(PageRequest.of(offset, pageSize));
-       return users;
+    public Page<Usuario> buscaUsuarios(Integer page, Integer linesPerPage,
+                                       String direction, String orderBy){
+        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
+        return repository.findAll(pageRequest);
     }
 }
