@@ -1,5 +1,6 @@
 package com.example.model;
 
+import com.example.controller.dtos.UsuarioResponseDTO;
 import com.example.controller.dtos.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.Entity;
@@ -7,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity

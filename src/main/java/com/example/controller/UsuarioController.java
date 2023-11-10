@@ -1,13 +1,13 @@
 package com.example.controller;
 
 import com.example.controller.dtos.UsuarioRequestDTO;
+import com.example.controller.dtos.UsuarioResponseDTO;
 import com.example.controller.dtos.Views;
 import com.example.model.Usuario;
 import com.example.service.UsuarioService;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,16 +37,16 @@ public class UsuarioController {
     }
 
      @GetMapping("/{id}")
-     public ResponseEntity<Usuario> findById(@PathVariable Long id){
+     public ResponseEntity<UsuarioResponseDTO> findById(@PathVariable Long id){
          return ResponseEntity.ok(usuarioService.buscaId(id));
      }
 
      @GetMapping
-     public ResponseEntity<Page<Usuario>> getUsers(@RequestParam(value = "page", defaultValue = "0") Integer page,
+     public ResponseEntity<Page<UsuarioResponseDTO>> getUsers(@RequestParam(value = "page", defaultValue = "0") Integer page,
                                    @RequestParam(value = "linesPerPage", defaultValue = "3")Integer linesPerPage,
                                    @RequestParam(value = "direction", defaultValue = "ASC")String direction,
                                    @RequestParam(value = "orderBy", defaultValue = "id")String orderBy) {
-         Page<Usuario> usuarioPage = usuarioService.buscaUsuarios(page, linesPerPage, direction, orderBy);
+         Page<UsuarioResponseDTO> usuarioPage = usuarioService.buscaUsuarios(page, linesPerPage, direction, orderBy);
          return ResponseEntity.ok(usuarioPage);
      }
 }
