@@ -3,6 +3,7 @@ package com.example.controller;
 import com.example.controller.dtos.UsuarioRequestDTO;
 import com.example.controller.dtos.UsuarioResponseDTO;
 import com.example.controller.dtos.Views;
+import com.example.mapper.UsuarioRequestMapper;
 import com.example.model.Usuario;
 import com.example.service.UsuarioService;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -25,7 +26,7 @@ public class UsuarioController {
    private final UsuarioService usuarioService;
 
     @Autowired
-    public UsuarioController(UsuarioService usuarioService) {
+    public UsuarioController(UsuarioService usuarioService, UsuarioRequestMapper usuarioRequestMapper) {
         this.usuarioService = usuarioService;
     }
 

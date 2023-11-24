@@ -6,16 +6,35 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
-public class ControllerExceptionHandler extends RuntimeException {
+public class ControllerExceptionHandler {
 
     @ExceptionHandler(UsuarioJaExisteException.class)
-    public ResponseEntity<String> handleUsuarioJaExisteException(UsuarioJaExisteException ex){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleUsuarioJaExisteException(UsuarioJaExisteException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(UsuarioNotFoundException.class)
-    public ResponseEntity<String> handleUsuarioNotFoundException(UsuarioNotFoundException ex){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleUsuarioNotFoundException(UsuarioNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
+    public static class ErrorResponse {
+        private int status;
+        private String message;
+
+        public ErrorResponse(int status, String message) {
+            this.status = status;
+            this.message = message;
+        }
+
+        public int getStatus() {
+            return status;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+    }
 }

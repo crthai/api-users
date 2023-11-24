@@ -5,9 +5,9 @@ import com.example.controller.dtos.UsuarioResponseDTO;
 import com.example.exception.UsuarioJaExisteException;
 import com.example.exception.UsuarioNotFoundException;
 import com.example.mapper.UsuarioMapper;
+import com.example.mapper.UsuarioRequestMapper;
 import com.example.model.Usuario;
 import com.example.repository.UsuarioRepository;
-import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -23,25 +23,22 @@ import java.util.logging.Logger;
 public class UsuarioService {
     private final UsuarioRepository repository;
     private final UsuarioMapper usuarioMapper;
+    private final UsuarioRequestMapper usuarioRequestMapper;
     private final static Logger logger = Logger.getLogger(UsuarioService.class.getName());
 
     @Autowired
-    public UsuarioService(UsuarioRepository repository, UsuarioMapper usuarioMapper) {
+    public UsuarioService(UsuarioRepository repository, UsuarioMapper usuarioMapper, UsuarioRequestMapper usuarioRequestMapper) {
         this.repository = repository;
         this.usuarioMapper = usuarioMapper;
+        this.usuarioRequestMapper = usuarioRequestMapper;
     };
 
     public Usuario criarUsuario(UsuarioRequestDTO usuario){
         Optional<Usuario> optionalUsuario = buscaCPF(usuario.getCpf());
         if(optionalUsuario.isPresent()){
             throw new UsuarioJaExisteException("Usuário já existe com este CPF " + usuario.getCpf());
-            // throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro qualquer");
         }
-        Usuario novoUsuario = new Usuario();
-        novoUsuario.setCpf(usuario.getCpf());
-        novoUsuario.setNome(usuario.getNome());
-        novoUsuario.setIdade(usuario.getIdade());
-
+        Usuario novoUsuario = usuarioRequestMapper.usuarioRequestToUsuario(usuario);
         novoUsuario.setId(null);
         return repository.save(novoUsuario);
     };
@@ -53,7 +50,7 @@ public class UsuarioService {
     public UsuarioResponseDTO buscaId(Long id){
         Usuario usuario = repository.findById(id)
                 .orElseThrow(() -> new UsuarioNotFoundException("O usuário não existe com este " + id));
-        return usuarioMapper.toUsuarioDTO(usuario);
+        return usuarioMapper.toUsuarioResponseDTO(usuario);
     }
 
     public Page<UsuarioResponseDTO> buscaUsuarios(Integer page, Integer linesPerPage,
