@@ -50,4 +50,9 @@ public class UsuarioController {
          Page<UsuarioResponseDTO> usuarioPage = usuarioService.buscaUsuarios(page, linesPerPage, direction, orderBy);
          return ResponseEntity.ok(usuarioPage);
      }
+
+    @GetMapping("/publica")
+    public ResponseEntity<String> findById(){
+        return ResponseEntity.ok("Publica");
+    }
 }
